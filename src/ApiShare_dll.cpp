@@ -15,16 +15,21 @@ using namespace std;
 using namespace cv;
   
 //修改共享内存数据
-#define IMAGE_W 640  //图像宽
-#define IMAGE_H 480  //图像高
+#define IMAGE_W 5472  //图像宽
+#define IMAGE_H 3648  //图像高
 #define IMAGE_TYPE  CV_8UC3           // CV_8UC1 灰度图   CV_8UC3 3通道图像
 #define IMAGE_SIZE  IMAGE_W*IMAGE_H*3 //图片像素总大小 CV_8UC1--1通道  CV_8UC3--3通道彩色
 #define Shm_addrees 1209 //共享内存地址标识
 // 所有的返回函数必须有返回值 不然调用报错
-
+ 
  
 namespace MyShare{
-
+  
+  
+    
+  
+ 
+  
      //共享内存-图像
         typedef struct ShareData
     {
@@ -45,11 +50,14 @@ namespace MyShare{
         float high;
         float time;
     } ;
-
+  
+  
+  
  class Share_class
 {
     //变量定义
     public:
+  
             //1创建共享内存
             int shmid = shmget((key_t)Shm_addrees, sizeof(ShareData), 0666|IPC_CREAT);
             //2映射共享内存地址  shm指针记录了起始地址
@@ -68,6 +76,7 @@ namespace MyShare{
     public:
         //1初始化执行
         Share_class(){
+  
              printf("共享内存地址 ： %p\n", (int *)(shm));
              //存图要先把图像标志位初始给0，这里给会导致接收端调用开启的时候再次给0覆盖了1导致取图失败。
          }//1构造函数
@@ -352,7 +361,7 @@ uchar* Img_Cgg2py(){  //uchar* frame_data, int rows, int cols, int channels
             
         */
   
-         int Set_ImgFlag(int value){
+         int Set_ImgFalg(int value){
             pShareData->flag =value;
          }
   
@@ -526,9 +535,9 @@ extern "C" {
     }
   
   
-    int Set_ImgFlag_(int value){
+    int Set_ImgFalg_(int value){
   
-        useShare.Set_ImgFlag(value);
+        useShare.Set_ImgFalg(value);
     }
   
           
@@ -555,5 +564,12 @@ extern "C" {
   
   
 }
- 
+  
+  
+  
+  
+  
+  
+  
+  
 #endif

@@ -43,6 +43,7 @@ ADD_LIBRARY(facedetect SHARED
 			src/DatasetHandler/image_dataset_handler.hpp
 
 )
+add_library(python2share SHARED ApiShare_dll.cpp)
 
 add_subdirectory(src)
 
@@ -51,7 +52,7 @@ if(${BUILD_TESTS})
 endif()
 LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/include/libs/RaspberryPi4B)
 ADD_EXECUTABLE(LiveFaceReco src/main.cpp)
-
+target_link_libraries(python2share ${OpenCV_LIBS})
 TARGET_LINK_LIBRARIES(LiveFaceReco ${OpenCV_LIBS}  facedetect ncnn ParallelVideoCapture pthread -lstdc++fs)
 TARGET_LINK_LIBRARIES(facedetect ${OpenCV_LIBS} ncnn)
 TARGET_INCLUDE_DIRECTORIES(LiveFaceReco PRIVATE ${OpenCV_INCLUDE_DIRS})
