@@ -29,7 +29,7 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-ADD_LIBRARY(facedetect SHARED
+ADD_LIBRARY(facedetect STATIC
 			include/FacePreprocess.h 
 			src/ApiShare_dll.cpp
 			src/livefacereco.hpp
