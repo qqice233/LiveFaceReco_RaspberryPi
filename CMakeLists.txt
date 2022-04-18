@@ -29,9 +29,9 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-ADD_LIBRARY(facedetect STATIC
+ADD_LIBRARY(facedetect SHARED
 			include/FacePreprocess.h 
-						
+			src/ApiShare_dll.cpp			
 			src/livefacereco.hpp
 			src/livefacereco.cpp
 			src/live.cpp
@@ -43,7 +43,7 @@ ADD_LIBRARY(facedetect STATIC
 			src/DatasetHandler/image_dataset_handler.hpp
 
 )
-ADD_LIBRARY(facedetect SHARED src/ApiShare_dll.cpp)
+
 add_subdirectory(src)
 
 if(${BUILD_TESTS})
