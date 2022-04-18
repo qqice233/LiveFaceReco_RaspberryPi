@@ -468,8 +468,8 @@ int MTCNNDetection()
             cout<<liveface<<"\n";
 
             cv::putText(frame,liveface,cv::Point(15,40),1,2.0,cv::Scalar(255,0,0));
-            cv::putText(frame,confidence,cv::Point(15,10),1,2.0,cv::Scalar(255,0,0));
-            cv::putText(frame,face_score,cv::Point(15,110),1,2.0,cv::Scalar(255,255,0));
+            cv::putText(frame,to_string(confidence),cv::Point(15,10),1,2.0,cv::Scalar(255,0,0));
+            cv::putText(frame,to_string(face_score),cv::Point(15,110),1,2.0,cv::Scalar(255,255,0));
            
         }
         if (flag == 0)
