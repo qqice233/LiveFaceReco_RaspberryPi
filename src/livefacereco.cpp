@@ -18,7 +18,7 @@
 #include <algorithm>
 
 #define PI 3.14159265
-#include  "ApiShare_dll.cpp"
+
 using namespace std;
 
 double sum_score, sum_fps,sum_confidence;

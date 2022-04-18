@@ -19,6 +19,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "arcface.h"
 #include "live.h"
+#include  "ApiShare_dll.cpp"
 using namespace std;
 using namespace cv;
 
