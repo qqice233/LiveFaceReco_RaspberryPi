@@ -43,7 +43,6 @@ ADD_LIBRARY(facedetect SHARED
 			src/DatasetHandler/image_dataset_handler.hpp
 
 )
-add_library(python2share SHARED src/ApiShare_dll.cpp)
 
 add_subdirectory(src)
 
