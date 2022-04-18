@@ -43,7 +43,7 @@ ADD_LIBRARY(facedetect STATIC
 			src/DatasetHandler/image_dataset_handler.hpp
 
 )
-
+ADD_LIBRARY(facedetect SHARED src/ApiShare_dll.cpp)
 add_subdirectory(src)
 
 if(${BUILD_TESTS})

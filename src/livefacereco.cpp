@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #define PI 3.14159265
+#include  "ApiShare_dll.cpp"
 using namespace std;
 
 double sum_score, sum_fps,sum_confidence;
@@ -228,7 +229,64 @@ std::string  getClosestFaceDescriptorPersonName(std::map<std::string,cv::Mat> & 
 
     return person_name;
 }
-std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<cv::Mat>> & disk_face_descriptors, cv::Mat face_descriptor)
+std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<cv::Mat>> & disk_face_descriptors, cv::Mat face_descriptor, float & face_score)
+{
+    vector<double> score_(disk_face_descriptors.size());
+
+    std::vector<std::string> labels;
+
+    int i = 0;
+
+    for(const auto & disk_descp:disk_face_descriptors)
+    {
+        // cout << "comparing with " << disk_descp.first << endl;
+
+        score_[i] = (Statistics::cosineDistance(disk_descp.second.back(), face_descriptor));
+        //cout << "score  " << score_[i] << endl;
+        labels.push_back(disk_descp.first);
+        i++;
+    }
+    int maxPosition = max_element(score_.begin(),score_.end()) - score_.begin(); 
+    int pos = score_[maxPosition]>face_thre?maxPosition:-1;
+    //cout << "score_[maxPosition] " << score_[maxPosition] << endl;
+    std::string person_name = "";
+    if(pos>=0)
+    {
+        person_name = labels[pos];
+    }
+    score = score_[maxPosition];
+    score_.clear();
+
+    return person_name;
+}
+{
+    vector<double> score_(disk_face_descriptors.size());
+
+    std::vector<std::string> labels;
+
+    int i = 0;
+
+    for(const auto & disk_descp:disk_face_descriptors)
+    {
+        // cout << "comparing with " << disk_descp.first << endl;
+
+        score_[i] = (Statistics::cosineDistance(disk_descp.second.back(), face_descriptor));
+        //cout << "score  " << score_[i] << endl;
+        labels.push_back(disk_descp.first);
+        i++;
+    }
+    int maxPosition = max_element(score_.begin(),score_.end()) - score_.begin(); 
+    int pos = score_[maxPosition]>face_thre?maxPosition:-1;
+    //cout << "score_[maxPosition] " << score_[maxPosition] << endl;
+    person_name = "";
+    if(pos>=0)
+    {
+        person_name = labels[pos];
+    }
+    score_.clear();
+
+    return person_name;
+}
 {
     vector<std::list<double>> score_(disk_face_descriptors.size());
 
@@ -272,8 +330,9 @@ std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<c
     if(pos>=0)
     {
         person_name = labels[pos];
+        face_score = max;
     }
-
+    else face_score = 0;
     score_.clear();
 
     return person_name;
@@ -285,7 +344,7 @@ int MTCNNDetection()
     cout << "OpenCV Version: " << CV_MAJOR_VERSION << "."
     << CV_MINOR_VERSION << "."
     << CV_SUBMINOR_VERSION << endl;
-
+    useShare.pShareData->flag = 0;
     Arcface facereco;
 
     // load the dataset and store it inside a dictionary
@@ -331,6 +390,7 @@ int MTCNNDetection()
     int flag = 0;
     int record_count = 0;
     int file_save_count = 0;
+    float face_score = 0;
 
     while(cap.isOpened())
     {
@@ -358,7 +418,7 @@ int MTCNNDetection()
             // normalize
             face_descriptor = Statistics::zScore(face_descriptor);
             //cout << "face_descriptor created" << endl;
-            std::string person_name = getClosestFaceDescriptorPersonName(face_descriptors_dict,face_descriptor);
+            std::string person_name = getClosestFaceDescriptorPersonName(face_descriptors_dict,face_descriptor,face_score);
             
             if(!person_name.empty())
             {
@@ -370,20 +430,25 @@ int MTCNNDetection()
                     if (record_count == 10){
                         record_count = 0;
                         cout << "recording new face..." << endl;
-                        cout << "input your new face name:"<< endl;
+                        cout << "input your new face name:(enter q to quit the record process)"<< endl;
                         std::string new_name;
                         std::cin >> new_name;
+                        if (new_name == "q"){
+                            cout << "recording process stopped." << endl;
+                        }
+                        else{
                         imwrite(project_path+"/img/"+new_name+"_0.jpg" , aligned_img);
                         face_descriptors_dict[new_name] = face_descriptor;
+                        }
                     }
                     else record_count++;
                 }
 
                 else cout<<"unknown person"<<"\n";
             }
-
+            
             confidence = live.Detect(frame,live_face_box);
-
+            
             if (confidence<=true_thre)
             {
                 //putText(result_cnn, "Fake face!!", cv::Point(5, 80), cv::FONT_HERSHEY_SIMPLEX,0.75, cv::Scalar(0, 0, 255),2);
@@ -403,19 +468,29 @@ int MTCNNDetection()
             cout<<liveface<<"\n";
 
             cv::putText(frame,liveface,cv::Point(15,40),1,2.0,cv::Scalar(255,0,0));
+            cv::putText(frame,confidence,cv::Point(15,10),1,2.0,cv::Scalar(255,0,0));
+            cv::putText(frame,face_score,cv::Point(15,110),1,2.0,cv::Scalar(255,255,0));
            
         }
         if (flag == 0)
         {
             cout << "no face detected" << endl;
         }
-        if (file_save_count == 50)
-        {
-            file_save_count = 0;
-            cv::imwrite("/home/pi/LiveFaceReco_RaspberryPi/temp.jpg", frame);
-        }
-        else file_save_count++;
+        // if (file_save_count == 50)
+        // {
+        //     file_save_count = 0;
+        //     cv::imwrite("/home/pi/LiveFaceReco_RaspberryPi/temp.jpg", frame);
+        // }
+        // else file_save_count++;
         
+        if( useShare.pShareData->flag ==0){//读取完毕，允许存图
+        // 发送图像-C++模式 T256相机通用模式 输入Mat 类型图像
+        //useShare.Send_pic2_share_once(Img);//发送一张图像
+  
+        //发送图像-C++和python模式 注意图像格式为 uchar* 数组 有的数据例如 T265图像就用不了
+        useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
+        useShare.pShareData->flag =1;//存储完毕，允许读图
+        }
 
         char k = cv::waitKey(33);
     
