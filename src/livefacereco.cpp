@@ -9,6 +9,7 @@
 
 
 #include <math.h>
+#include "livefacereco.hpp"
 #include <time.h>
 #include "math.hpp"
 #include "ParallelVideoCapture/parallel_video_capture.hpp"

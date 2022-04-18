@@ -31,7 +31,7 @@ endif()
 
 ADD_LIBRARY(facedetect SHARED
 			include/FacePreprocess.h 
-			src/ApiShare_dll.cpp			
+			src/ApiShare_dll.cpp
 			src/livefacereco.hpp
 			src/livefacereco.cpp
 			src/live.cpp

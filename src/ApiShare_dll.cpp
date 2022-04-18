@@ -1,9 +1,17 @@
 #ifndef SHARE
 #define SHARE
   
-#include "livefacereco.hpp"
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/shm.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <iostream>
+#include <vector>
+#include <string>
+
 using namespace std;
 using namespace cv;
   
