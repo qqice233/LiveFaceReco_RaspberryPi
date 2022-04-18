@@ -199,7 +199,7 @@ cv::Mat alignFaceImage(const cv::Mat & frame, const Bbox & bbox,const cv::Mat & 
     return aligned.clone();
 }
 
-std::string  getClosestFaceDescriptorPersonName(std::map<std::string,cv::Mat> & disk_face_descriptors, cv::Mat face_descriptor)
+std::string  getClosestFaceDescriptorPersonName(std::map<std::string,cv::Mat> & disk_face_descriptors, cv::Mat face_descriptor, float & face_score)
 {
     vector<double> score_(disk_face_descriptors.size());
 
@@ -223,69 +223,14 @@ std::string  getClosestFaceDescriptorPersonName(std::map<std::string,cv::Mat> & 
     if(pos>=0)
     {
         person_name = labels[pos];
+        face_score = score_[maxPosition];
     }
+    else face_score = 0.0f;
     score_.clear();
 
     return person_name;
 }
-std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<cv::Mat>> & disk_face_descriptors, cv::Mat face_descriptor, float & face_score)
-{
-    vector<double> score_(disk_face_descriptors.size());
-
-    std::vector<std::string> labels;
-
-    int i = 0;
-
-    for(const auto & disk_descp:disk_face_descriptors)
-    {
-        // cout << "comparing with " << disk_descp.first << endl;
-
-        score_[i] = (Statistics::cosineDistance(disk_descp.second.back(), face_descriptor));
-        //cout << "score  " << score_[i] << endl;
-        labels.push_back(disk_descp.first);
-        i++;
-    }
-    int maxPosition = max_element(score_.begin(),score_.end()) - score_.begin(); 
-    int pos = score_[maxPosition]>face_thre?maxPosition:-1;
-    //cout << "score_[maxPosition] " << score_[maxPosition] << endl;
-    std::string person_name = "";
-    if(pos>=0)
-    {
-        person_name = labels[pos];
-    }
-    score = score_[maxPosition];
-    score_.clear();
-
-    return person_name;
-}
-{
-    vector<double> score_(disk_face_descriptors.size());
-
-    std::vector<std::string> labels;
-
-    int i = 0;
-
-    for(const auto & disk_descp:disk_face_descriptors)
-    {
-        // cout << "comparing with " << disk_descp.first << endl;
-
-        score_[i] = (Statistics::cosineDistance(disk_descp.second.back(), face_descriptor));
-        //cout << "score  " << score_[i] << endl;
-        labels.push_back(disk_descp.first);
-        i++;
-    }
-    int maxPosition = max_element(score_.begin(),score_.end()) - score_.begin(); 
-    int pos = score_[maxPosition]>face_thre?maxPosition:-1;
-    //cout << "score_[maxPosition] " << score_[maxPosition] << endl;
-    person_name = "";
-    if(pos>=0)
-    {
-        person_name = labels[pos];
-    }
-    score_.clear();
-
-    return person_name;
-}
+std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<cv::Mat>> & disk_face_descriptors, cv::Mat face_descriptor)
 {
     vector<std::list<double>> score_(disk_face_descriptors.size());
 
@@ -329,9 +274,7 @@ std::string  getClosestFaceDescriptorPersonName(std::map<std::string,std::list<c
     if(pos>=0)
     {
         person_name = labels[pos];
-        face_score = max;
     }
-    else face_score = 0;
     score_.clear();
 
     return person_name;
