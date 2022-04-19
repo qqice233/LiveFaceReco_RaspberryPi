@@ -39,6 +39,9 @@ namespace MyShare{
         int rows;//图像高
         int cols;//图像宽
         char imgdata[IMAGE_SIZE];//图像数据一维数据，之前用了cv::Mat不行，因为无法在结构体里初始化大小
+        char name[20];//人名
+        float score;
+        float confidence;
     }ShareData_;
   
     class Share_class
@@ -165,14 +168,41 @@ namespace MyShare{
             }
 
             int Get_ImgFlag(){
-                return pShareData->flag ;
-            }  
+                return pShareData->flag;
+            }
             int Set_ImgFlag(int value){
                 pShareData->flag =value;
-            }      
+            }
+            int Set_Name(string str){
+                pShareData->name = "";
+                for (int i = 0; i < str.length(); i++)
+                {
+                    pShareData->name[i] = str[i];
+                }
+            }
+            string Get_Name(){
+                string str = "";
+                int i = 0;
+                while(pShareData->name[i] != '\0'){
+                    str += pShareData->name[i];
+                    i++;
+                }
+                return str;
+            }
+            int Set_Score(float value){
+                pShareData->score = value;
+            }
+            float Get_Score(){
+                return pShareData->score;
+            }
+            int Set_Confidence(float value){
+                pShareData->confidence = value;
+            }
+            float Get_Confidence(){
+                return pShareData->confidence;
+            }
     };//类定义结束  
 }//namespace 定义
-
 std::vector<std::string> split(const std::string& s, char seperator)
 {
    std::vector<std::string> output;
@@ -435,7 +465,7 @@ int MTCNNDetection()
     cout << "OpenCV Version: " << CV_MAJOR_VERSION << "."
     << CV_MINOR_VERSION << "."
     << CV_SUBMINOR_VERSION << endl;
-    useShare.pShareData->flag = 0;
+    useShare.Set_ImgFlag(0);
     Arcface facereco;
 
     // load the dataset and store it inside a dictionary
@@ -467,6 +497,7 @@ int MTCNNDetection()
 
     float confidence;
     vector<float> fps;
+    float face_score;
     
     Mat frame;
     Mat result_cnn;
@@ -481,13 +512,10 @@ int MTCNNDetection()
     int flag = 0;
     int record_count = 0;
     int file_save_count = 0;
-    float face_score = 0;
 
     while(cap.isOpened())
     {
         frame = cap.getFrame();    
-        //cv::resize(frame,frame,cv::Size(300,300));
-        //cout << "frame size: " << frame.size() << endl;
         if(frame.empty())
         {
             continue;
@@ -500,17 +528,12 @@ int MTCNNDetection()
         {
             flag = 1;
             auto large_box = getLargestBboxFromBboxVec(faces_info);
-            //cout << "large_box got" << endl;
             LiveFaceBox live_face_box = Bbox2LiveFaceBox(large_box);
-            
             cv::Mat aligned_img = alignFaceImage(frame,large_box,face_landmark_gt_matrix);
-            //cout << "aligned_img got" << endl;
             cv::Mat face_descriptor = facereco.getFeature(aligned_img);
             // normalize
             face_descriptor = Statistics::zScore(face_descriptor);
-            //cout << "face_descriptor created" << endl;
             std::string person_name = getClosestFaceDescriptorPersonName(face_descriptors_dict,face_descriptor,face_score);
-            
             if(!person_name.empty())
             {
                 record_count = 0;
@@ -528,13 +551,12 @@ int MTCNNDetection()
                             cout << "recording process stopped." << endl;
                         }
                         else{
-                        imwrite(project_path+"/img/"+new_name+"_0.jpg" , aligned_img);
-                        face_descriptors_dict[new_name] = face_descriptor;
+                            imwrite(project_path+"/img/"+new_name+"_0.jpg" , aligned_img);
+                            face_descriptors_dict[new_name] = face_descriptor;
                         }
                     }
                     else record_count++;
                 }
-
                 else cout<<"unknown person"<<"\n";
             }
             
@@ -542,26 +564,18 @@ int MTCNNDetection()
             
             if (confidence<=true_thre)
             {
-                //putText(result_cnn, "Fake face!!", cv::Point(5, 80), cv::FONT_HERSHEY_SIMPLEX,0.75, cv::Scalar(0, 0, 255),2);
                 liveface="Fake face!!";
             }
             else
             {
-                //putText(result_cnn, person_name, cv::Point(30, 40), cv::FONT_HERSHEY_SIMPLEX,0.75, cv::Scalar(255, 255, 0),2);   
-                
                 putText(frame, person_name, cv::Point(15, 80), cv::FONT_HERSHEY_SIMPLEX,0.75, cv::Scalar(255, 255, 0),2);  
-
                 liveface="True face";
-                 cv::rectangle(frame, Point(large_box.x1*ratio_x, large_box.y1*ratio_y), Point(large_box.x2*ratio_x,large_box.y2*ratio_y), cv::Scalar(0, 0, 255), 2);
-                
+                cv::rectangle(frame, Point(large_box.x1*ratio_x, large_box.y1*ratio_y), Point(large_box.x2*ratio_x,large_box.y2*ratio_y), cv::Scalar(0, 0, 255), 2);
             }
-
             cout<<liveface<<"\n";
-
             cv::putText(frame,liveface,cv::Point(15,40),1,2.0,cv::Scalar(255,0,0));
             cv::putText(frame,to_string(confidence),cv::Point(15,10),1,2.0,cv::Scalar(255,0,0));
             cv::putText(frame,to_string(face_score),cv::Point(15,110),1,2.0,cv::Scalar(255,255,0));
-           
         }
         if (flag == 0)
         {
@@ -574,10 +588,14 @@ int MTCNNDetection()
         // }
         // else file_save_count++;
         
-        if( useShare.pShareData->flag ==0){//读取完毕，允许存图
-        useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
-        useShare.pShareData->flag =1;//存储完毕，允许读图
+        if(useShare.Get_ImgFlag() ==0){//读取完毕，允许存图
+            useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
+            useShare.Set_Name(person_name);
+            useShare.Set_Confidence(confidence);
+            useShare.Set_LiveFace(liveface);
+            useShare.Set_ImgFlag(1);//存储完毕，允许读图
         }
+    }
 
         char k = cv::waitKey(33);
     

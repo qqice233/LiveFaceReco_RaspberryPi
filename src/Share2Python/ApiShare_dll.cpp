@@ -32,6 +32,9 @@ namespace MyShare{
         int rows;//图像高
         int cols;//图像宽
         char imgdata[IMAGE_SIZE];//图像数据一维数据，之前用了cv::Mat不行，因为无法在结构体里初始化大小
+        char name[20];//人名
+        float score;
+        float confidence;
     }ShareData_;
   
     class Share_class
@@ -158,11 +161,39 @@ namespace MyShare{
             }
 
             int Get_ImgFlag(){
-                return pShareData->flag ;
-            }  
+                return pShareData->flag;
+            }
             int Set_ImgFlag(int value){
                 pShareData->flag =value;
-            }      
+            }
+            int Set_Name(string str){
+                pShareData->name = "";
+                for (int i = 0; i < str.length(); i++)
+                {
+                    pShareData->name[i] = str[i];
+                }
+            }
+            string Get_Name(){
+                string str = "";
+                int i = 0;
+                while(pShareData->name[i] != '\0'){
+                    str += pShareData->name[i];
+                    i++;
+                }
+                return str;
+            }
+            int Set_Score(float value){
+                pShareData->score = value;
+            }
+            float Get_Score(){
+                return pShareData->score;
+            }
+            int Set_Confidence(float value){
+                pShareData->confidence = value;
+            }
+            float Get_Confidence(){
+                return pShareData->confidence;
+            }
     };//类定义结束  
 }//namespace 定义
   
@@ -176,30 +207,43 @@ extern "C" {
     MyShare::Share_class useShare;
   
     int DestroyShare_(){
-         useShare.DestroyShare();
+        useShare.DestroyShare();
     }
     int Send_pic2_share_once_(cv::Mat Img){
-  
-         useShare.Send_pic2_share_once(Img);
-  
+        useShare.Send_pic2_share_once(Img);
     }
     int pySend_pic2_share_once_(uchar *frame_data, int height, int width){
-         useShare.pySend_pic2_share_once(frame_data,  height, width);
+        useShare.pySend_pic2_share_once(frame_data,  height, width);
     }
     int  Rec_pic2_data_once_(){
-  
-         useShare.Rec_pic2_data_once();
-  
+        useShare.Rec_pic2_data_once();
     } 
     uchar* Img_Cgg2py_(){
-         useShare.Img_Cgg2py();
+        useShare.Img_Cgg2py();
     }
     int Get_ImgFlag_(){
-            useShare.Get_ImgFlag();
+        useShare.Get_ImgFlag();
     }
     int Set_ImgFlag_(int value){
-  
         useShare.Set_ImgFlag(value);
+    }
+    int Set_Name_(string str){
+        useShare.Set_Name(str);
+    }
+    string Get_Name_(){
+        useShare.Get_Name();
+    }
+    int Set_Score_(float value){
+        useShare.Set_Score(value);
+    }
+    float Get_Score_(){
+        useShare.Get_Score();
+    }
+    int Set_Confidence_(float value){
+        useShare.Set_Confidence(value);
+    }
+    float Get_Confidence_(){
+        useShare.Get_Confidence();
     }
 }
 #endif
