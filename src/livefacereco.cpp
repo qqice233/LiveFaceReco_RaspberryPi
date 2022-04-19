@@ -6,8 +6,8 @@
 //
 //
 // Refactored and edited by Luiz Correia 2021/06/20
-
-
+#include <unistd.h>
+#include <sys/shm.h>
 #include <math.h>
 #include "livefacereco.hpp"
 #include <time.h>
@@ -19,7 +19,13 @@
 #include <algorithm>
 
 #define PI 3.14159265
-
+//修改共享内存数据
+#define IMAGE_W 640  //图像宽
+#define IMAGE_H 480  //图像高
+#define IMAGE_TYPE  CV_8UC3           // CV_8UC1 灰度图   CV_8UC3 3通道图像
+#define IMAGE_SIZE  IMAGE_W*IMAGE_H*3 //图片像素总大小 CV_8UC1--1通道  CV_8UC3--3通道彩色
+#define Shm_address 1209 //共享内存地址标识
+// 所有的返回函数必须有返回值 不然调用报错
 using namespace std;
 
 double sum_score, sum_fps,sum_confidence;
