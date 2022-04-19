@@ -578,6 +578,17 @@ int MTCNNDetection()
             cv::putText(frame,liveface,cv::Point(15,40),1,2.0,cv::Scalar(255,0,0));
             cv::putText(frame,to_string(confidence),cv::Point(15,10),1,2.0,cv::Scalar(255,0,0));
             cv::putText(frame,to_string(face_score),cv::Point(15,110),1,2.0,cv::Scalar(255,255,0));
+            if(useShare.Get_ImgFlag() ==0){//读取完毕，允许存图
+                useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
+                strcpy(useShare.pShareData->name,"");
+                for (int i = 0; i < person_name.length(); i++)
+                {
+                    useShare.pShareData->name[i] = person_name[i];
+                }
+                useShare.pShareData->score = face_score;
+                useShare.pShareData->confidence = confidence;
+                useShare.pShareData->flag = 1;
+            }
         }
         if (flag == 0)
         {
@@ -590,17 +601,6 @@ int MTCNNDetection()
         // }
         // else file_save_count++;
         
-        if(useShare.Get_ImgFlag() ==0){//读取完毕，允许存图
-            useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
-            strcpy(useShare.pShareData->name,"");
-            for (int i = 0; i < person_name.length(); i++)
-            {
-                useShare.pShareData->name[i] = person_name[i];
-            }
-            useShare.pShareData->score = face_score;
-            useShare.pShareData->confidence = confidence;
-            useShare.pShareData->flag = 1;
-        }
 
         char k = cv::waitKey(33);
 
