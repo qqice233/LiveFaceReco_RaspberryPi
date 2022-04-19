@@ -597,7 +597,6 @@ int MTCNNDetection()
             useShare.Set_Score(face_score);
             useShare.Set_ImgFlag(1);//存储完毕，允许读图
         }
-    }
 
         char k = cv::waitKey(33);
 
