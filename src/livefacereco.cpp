@@ -180,8 +180,8 @@ namespace MyShare{
                     pShareData->name[i] = str[i];
                 }
             }
-            string Get_Name(){
-                string str = "";
+            char* Get_Name(){
+                char* str = "";
                 int i = 0;
                 while(pShareData->name[i] != '\0'){
                     str += pShareData->name[i];

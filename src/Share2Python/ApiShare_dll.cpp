@@ -173,8 +173,8 @@ namespace MyShare{
                     pShareData->name[i] = str[i];
                 }
             }
-            string Get_Name(){
-                string str = "";
+            char* Get_Name(){
+                char* str = "";
                 int i = 0;
                 while(pShareData->name[i] != '\0'){
                     str += pShareData->name[i];
@@ -230,7 +230,7 @@ extern "C" {
     int Set_Name_(string str){
         useShare.Set_Name(str);
     }
-    string Get_Name_(){
+    char* Get_Name_(){
         useShare.Get_Name();
     }
     int Set_Score_(float value){
