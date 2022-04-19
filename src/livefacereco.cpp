@@ -600,8 +600,7 @@ int MTCNNDetection()
     }
 
         char k = cv::waitKey(33);
-    
-        if(k == 27)break;
+
         count ++;
     }
     cap.stopCapture();
