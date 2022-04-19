@@ -41,3 +41,12 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+build/.cmake/api/v1/query/client-vscode/query.json
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/LiveFaceReco_RaspberryPi.iml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/LiveFaceReco_RaspberryPi.iml

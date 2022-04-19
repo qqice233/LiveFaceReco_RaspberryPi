@@ -31,7 +31,7 @@ endif()
 
 ADD_LIBRARY(facedetect STATIC
 			include/FacePreprocess.h 
-			src/ApiShare_dll.cpp
+
 			src/livefacereco.hpp
 			src/livefacereco.cpp
 			src/live.cpp
@@ -41,7 +41,6 @@ ADD_LIBRARY(facedetect STATIC
 			src/mtcnn_new.cpp
 			src/mtcnn_new.h
 			src/DatasetHandler/image_dataset_handler.hpp
-
 )
 
 add_subdirectory(src)

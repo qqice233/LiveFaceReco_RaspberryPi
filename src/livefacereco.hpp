@@ -2,19 +2,23 @@
 // Created by Xinghao Chen 2020/7/27
 //
 
+#include <iostream>
+#include <stdio.h>
 
+#include "stdlib.h"
+#include <iostream>
 #include <array>
-
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <fstream>
 #include <iterator>
 #include <algorithm>
-
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "arcface.h"
 #include "live.h"
-#include "ApiShare_dll.cpp"
 using namespace std;
 using namespace cv;
 
