@@ -50,3 +50,4 @@ build/.cmake/api/v1/query/client-vscode/query.json
 .idea/modules.xml
 .idea/misc.xml
 .idea/LiveFaceReco_RaspberryPi.iml
+.vscode/settings.json

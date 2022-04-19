@@ -507,6 +507,7 @@ int MTCNNDetection()
     cv::Mat face_landmark_gt_matrix = createFaceLandmarkGTMatrix();
     int count = -1;
     std::string liveface;
+    std::string person_name;
     float ratio_x = 1;
     float ratio_y = 1;
     int flag = 0;
@@ -533,7 +534,7 @@ int MTCNNDetection()
             cv::Mat face_descriptor = facereco.getFeature(aligned_img);
             // normalize
             face_descriptor = Statistics::zScore(face_descriptor);
-            std::string person_name = getClosestFaceDescriptorPersonName(face_descriptors_dict,face_descriptor,face_score);
+            person_name = getClosestFaceDescriptorPersonName(face_descriptors_dict,face_descriptor,face_score);
             if(!person_name.empty())
             {
                 record_count = 0;
@@ -558,6 +559,7 @@ int MTCNNDetection()
                     else record_count++;
                 }
                 else cout<<"unknown person"<<"\n";
+                person_name = "";
             }
             
             confidence = live.Detect(frame,live_face_box);
@@ -599,8 +601,7 @@ int MTCNNDetection()
 
         char k = cv::waitKey(33);
     
-        if(k == 27)
-            break;
+        if(k == 27)break;
         count ++;
     }
     cap.stopCapture();
