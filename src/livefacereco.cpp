@@ -595,7 +595,7 @@ int MTCNNDetection()
             strcpy(useShare.pShareData->name,"");
             for (int i = 0; i < person_name.length(); i++)
             {
-                pShareData->name[i] = person_name[i];
+                useShare.pShareData->name[i] = person_name[i];
             }
             useShare.pShareData->score = face_score;
             useShare.pShareData->confidence = confidence;
