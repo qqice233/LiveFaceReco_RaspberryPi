@@ -594,7 +594,7 @@ int MTCNNDetection()
             useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
             useShare.Set_Name(person_name);
             useShare.Set_Confidence(confidence);
-            useShare.Set_LiveFace(liveface);
+            useShare.Set_Score(face_score);
             useShare.Set_ImgFlag(1);//存储完毕，允许读图
         }
     }
