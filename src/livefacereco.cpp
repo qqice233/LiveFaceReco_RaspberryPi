@@ -465,7 +465,7 @@ int MTCNNDetection()
     cout << "OpenCV Version: " << CV_MAJOR_VERSION << "."
     << CV_MINOR_VERSION << "."
     << CV_SUBMINOR_VERSION << endl;
-    useShare.Set_ImgFlag(0);
+    useShare.pShareData->flag = 0;
     Arcface facereco;
 
     // load the dataset and store it inside a dictionary
@@ -592,10 +592,14 @@ int MTCNNDetection()
         
         if(useShare.Get_ImgFlag() ==0){//读取完毕，允许存图
             useShare.pySend_pic2_share_once((uchar*)frame.data,frame.rows,frame.cols);//发送一张图
-            useShare.Set_Name(person_name);
-            useShare.Set_Confidence(confidence);
-            useShare.Set_Score(face_score);
-            useShare.Set_ImgFlag(1);//存储完毕，允许读图
+            strcpy(useShare.pShareData->name,"");
+            for (int i = 0; i < person_name.length(); i++)
+            {
+                pShareData->name[i] = person_name[i];
+            }
+            useShare.pShareData->score = face_score;
+            useShare.pShareData->confidence = confidence;
+            useShare.pShareData->flag = 1;
         }
 
         char k = cv::waitKey(33);
