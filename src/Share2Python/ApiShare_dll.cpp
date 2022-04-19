@@ -167,7 +167,7 @@ namespace MyShare{
                 pShareData->flag =value;
             }
             int Set_Name(string str){
-                pShareData->name = "";
+                pShareData->name[] = "";
                 for (int i = 0; i < str.length(); i++)
                 {
                     pShareData->name[i] = str[i];
